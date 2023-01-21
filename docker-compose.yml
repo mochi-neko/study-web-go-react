@@ -2,10 +2,27 @@ version: '3'
 services:
   go:
     build:
-      context: .
-      dockerfile: ./docker/go/Dockerfile
+      context: ./go-app
+      dockerfile: ../docker/go/Dockerfile
     tty: true
-    volumes:
-      - ./go-app:/go-app
     ports:
-      - "3000:3000"
+      - 8000:8000
+    depends_on:
+      - mysql
+  mysql:
+    build:
+      context: .
+      dockerfile: ./docker/mysql/Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb
+      TZ: 'Asia/Tokyo'
+    ports:
+    - 3306:3306
+  react:
+    build:
+      context: ./react-app
+      dockerfile: ../docker/react/Dockerfile
+    tty: true
+    ports:
+      - 3000:3000
